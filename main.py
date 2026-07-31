@@ -16,9 +16,8 @@ DATABASE_URL = os.getenv("DATABASE_URL")
 
 
 def get_db():
-    return psycopg2.connect(
-        DATABASE_URL
-    )
+    return psycopg2.connect(DATABASE_URL)
+
 
 
 def init_db():
@@ -27,7 +26,7 @@ def init_db():
     cur = conn.cursor()
 
     cur.execute("""
-    CREATE TABLE IF NOT EXISTS numbers(
+    CREATE TABLE IF NOT EXISTS numbers (
         id SERIAL PRIMARY KEY,
         number TEXT UNIQUE,
         username TEXT,
@@ -89,11 +88,10 @@ async def check_number(
     result = cur.fetchone()
 
 
-
     if result:
 
         await update.message.reply_text(
-            f"⚠️号码已存在\n\n"
+            f"⚠️号码已经存在\n\n"
             f"首次上传用户：{result[0]}\n"
             f"Telegram ID：{result[1]}"
         )
@@ -105,9 +103,9 @@ async def check_number(
             """
             INSERT INTO numbers
             (
-            number,
-            username,
-            user_id
+                number,
+                username,
+                user_id
             )
             VALUES
             (%s,%s,%s)
@@ -133,6 +131,7 @@ async def check_number(
 
 
 
+
 async def count(
     update: Update,
     context: ContextTypes.DEFAULT_TYPE
@@ -151,7 +150,7 @@ async def count(
 
 
     await update.message.reply_text(
-        f"📊当前保存号码数量：{total}"
+        f"📊当前号码数量：{total}"
     )
 
 
@@ -160,10 +159,14 @@ async def count(
 
 
 
+
+# 初始化数据库
 init_db()
 
 
+
 app = Application.builder().token(TOKEN).build()
+
 
 
 app.add_handler(
@@ -174,12 +177,14 @@ app.add_handler(
 )
 
 
+
 app.add_handler(
     CommandHandler(
         "count",
         count
     )
 )
+
 
 
 app.add_handler(
@@ -190,7 +195,9 @@ app.add_handler(
 )
 
 
+
 print("Bot running...")
+
 
 
 app.run_polling()
